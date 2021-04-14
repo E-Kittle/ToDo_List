@@ -6,27 +6,57 @@ const projectFactory = (title, items) => {
     return {title, items};
 }
 
-// const projectManager;
+const projectManager = (() => {
+    const projectList = [];
+    
+
+    return {};
+})();
+
 
 // const itemManager;
 
 
 
+// Constants for DOM items
+
+//These 4 are for opening and closing the overlay. 
+const openProjectOverlay = document.querySelector('#addNewProject');
+const closeProjectOverlay = document.querySelector('#closeProjectOverlay');
+const openItemOverlay = document.querySelector('#addNewItem');
+const closeItemOverlay = document.querySelector('#closeItemOverlay');
+//constant for adding a new project or item to the overlay
+const addNewProject = document.querySelector('#submitNewProject');
 
 
 
 
+//Event Listener to add a new project
+addNewProject.addEventListener('click', function(event) {
+    event.preventDefault();
+    console.log('Project added');
+});
 
-// For the Overlay
-const addNewProject = document.querySelector('#addNewProject');
-addNewProject.addEventListener('click', () => {
+// For the Overlay - First two are for adding a new project and second two are for adding a new item
+openProjectOverlay.addEventListener('click', () => {
     document.querySelector('.overlay').style.display = "flex";
     document.querySelector('.projectOverlay').style.display = "flex";
 });
 
+closeProjectOverlay.addEventListener('click', () => {
+    document.querySelector('.overlay').style.display = "none";
+    document.querySelector('.projectOverlay').style.display = "none";
+});
 
+openItemOverlay.addEventListener('click', () => {
+    document.querySelector('.overlay').style.display = "flex";
+    document.querySelector('.itemOverlay').style.display = "flex";
+});
 
-
+closeItemOverlay.addEventListener('click', () => {
+    document.querySelector('.overlay').style.display = "none";
+    document.querySelector('.itemOverlay').style.display = "none";
+});
 
 
 

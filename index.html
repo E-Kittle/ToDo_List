@@ -15,13 +15,14 @@
 
         <div class="overlay">
             <div class="projectOverlay">
-                <button id="closeProject" class="closeButton">X</button>
+                <button id="closeProjectOverlay" class="closeButton">X</button>
                 <label for="newProject">What is the name of your new Project?</label>
                 <input type="text" id="newProject" name="newProject">
+                <button type="submit" id="submitNewProject">Add Project</button>
             </div>
             
             <div class="itemOverlay">
-
+                <button id="closeItemOverlay" class="closeButton">X</button>
             </div>
 
         </div>
@@ -37,7 +38,7 @@
                     <button id="todayButton" class="projectButton">Today</button>
                     <button id="weekButton" class="projectButton">This Week</button>
                 </div>
-                <button id="addNewProject">+</button>
+                <button id="addNewProject" class="addNew">+</button>
                 <h2>Projects</h2>
                 <!-- use the DOM to place project names here -->
                 <div class="newProjectHolder">
@@ -69,6 +70,7 @@
                         <p>now</p>
                     </div>
                 </div>
+                <button id="addNewItem" class="addNew">+</button>
             </div>
 
         </div>
