@@ -20,6 +20,44 @@ header{
     border-bottom-style: solid;
 }
 
+/* For the overlay */
+.overlay{
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.closeButton{
+    width: 30px;
+    height: 30px;
+    background-color: rgba(0,0,0,0.2);
+    border: none;
+    align-self: flex-end;
+}
+
+/* For the 'add new project' overlay */
+.projectOverlay{
+    display: none;
+    height: 20vh;
+    flex-direction: column;
+    background-color: slategray;
+}
+
+
+/* For the 'add new item' overlay */
+.itemOverlay{
+    display: none;
+}
+
+
 /* For the content */
 .contentWrapper {
     display: grid;
@@ -37,7 +75,8 @@ header{
 
 .projectWrapper h2{
     text-align: center;
-    margin-top: 60px;;
+    margin-bottom: 10px;
+    /* border-bottom: solid darkgray; */
 }
 
 .projectButton{
@@ -45,6 +84,10 @@ header{
     background-color: grey;
     border: solid black;
     margin: 5px 0;
+}
+
+.projectButton:hover {
+    background-color: darkgray;
 }
 
 .dateDrivenProjects{
@@ -55,6 +98,22 @@ header{
 .newProjectHolder{
     display: flex;
     flex-direction: column;
+}
+
+#addNewProject{
+    margin-top: 60px;
+    align-self: flex-end;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    font-size: 35px;
+    border: solid black;
+    background-color: gray;
+    color: black;
+}
+
+#addNew:hover{
+    background-color: darkgray;
 }
 /* For the items */
 .itemWrapper{
@@ -84,6 +143,10 @@ header{
     height: 100%;
     align-items: center;
     justify-content: space-between;
+}
+
+.itemContainer .itemStart{
+    padding-left: 30px;
 }
 
 .itemEnd{

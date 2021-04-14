@@ -1,14 +1,36 @@
-const itemFactory = (title, priority, dueDate) => {
-    return {title, priority, dueDate};
+const itemFactory = (title, priority, dueDate, description, status) => {
+    return {title, priority, dueDate, description, status};
 }
 
 const projectFactory = (title, items) => {
     return {title, items};
 }
 
-const projectManager;
+// const projectManager;
 
-const itemManager;
+// const itemManager;
+
+
+
+
+
+
+
+
+// For the Overlay
+const addNewProject = document.querySelector('#addNewProject');
+addNewProject.addEventListener('click', () => {
+    document.querySelector('.overlay').style.display = "flex";
+    document.querySelector('.projectOverlay').style.display = "flex";
+});
+
+
+
+
+
+
+
+
 
 
 // We'll need something to manage the list of projects on the sidebar
