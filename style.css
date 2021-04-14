@@ -9,13 +9,85 @@ body{
     color: white;
 }
 
+
+/* For the title "To Do" */
 header{
     height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 80%;
-    margin: auto;
     margin-top: 20px;
     border-bottom-style: solid;
+}
+
+/* For the content */
+.contentWrapper {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+}
+
+
+/* For the projects */
+.projectWrapper{
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    border: solid;
+}
+
+.projectWrapper h2{
+    text-align: center;
+    margin-top: 60px;;
+}
+
+.projectButton{
+    height: 4em;
+    background-color: grey;
+    border: solid black;
+    margin: 5px 0;
+}
+
+.dateDrivenProjects{
+    display: flex;
+    flex-direction: column;
+}
+
+.newProjectHolder{
+    display: flex;
+    flex-direction: column;
+}
+/* For the items */
+.itemWrapper{
+    margin: 0 30px;
+    margin-top: 100px;
+}
+
+.item{
+    display: flex;
+    height: 3em;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.itemLabels{
+    margin: 20px 0;
+    color: rgb(104, 137, 187);    
+}
+
+.itemContainer{
+    background-color: rgb(15, 15, 15);
+}
+
+.itemStart{
+    display: flex;
+    width: 30%;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.itemEnd{
+    display: flex;
+    width: 30%;
+    justify-content: space-around;
 }

@@ -16,15 +16,46 @@
             <h1>To Do</h1>
         </header>
         <!-- Section for sidebar -->
-        <div class="projectWrapper">
-            <button id="todayButton">Today</button>
-            <button id="weekButton">This Week</button>
-            <h2>Projects</h2>
-            <!-- use the DOM to place project names here -->
-            <button id="sampleButton">Sample Project</button>
-            <div class="itemWrapper">
-                
+        <div class="contentWrapper">
+
+            <div class="projectWrapper">
+                <div class="dateDrivenProjects">
+                    <button id="todayButton" class="projectButton">Today</button>
+                    <button id="weekButton" class="projectButton">This Week</button>
+                </div>
+                <h2>Projects</h2>
+                <!-- use the DOM to place project names here -->
+                <div class="newProjectHolder">
+                    <button id="sampleButton" class="projectButton">Sample Project</button>
+                </div>
             </div>
+
+            <div class="itemWrapper">
+                <div class="itemLabels item">
+                    <div class="itemStart">
+                        <p>Completed</p>
+                        <p>Thing to do</p>
+                    </div>
+                    <div class="itemEnd">
+                        
+                        <P>Priority</P>
+                        <p>Due</p>
+                    </div>
+                </div>
+                <div class="itemContainer item">
+                    <div class="itemStart">
+
+                        <input type="checkbox" id="complete">
+                        <p>Sample item</p>
+                    </div>
+                    <div class="itemEnd">
+
+                        <P>Urgent</P>
+                        <p>now</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <!-- Section for to do items -->
 
