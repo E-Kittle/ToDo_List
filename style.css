@@ -59,8 +59,9 @@ header{
 /* For the 'add new project' overlay */
 .projectOverlay{
     display: none;
-    height: 20vh;
+    height: 40vh;
     flex-direction: column;
+    justify-content: space-around;
     background-color: slategray;
 }
 
@@ -70,6 +71,11 @@ header{
     display: none;
 }
 
+/* For the input forms */
+.error{
+    height: 2em;
+    color: rgb(102, 40, 52);
+}
 
 /* For the content */
 .contentWrapper {

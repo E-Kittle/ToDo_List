@@ -39,9 +39,12 @@ const projectManager = (() => {
 const DOMManager = (() => {
 
     const newProject = (title) => {
-        if (_validateProj){
-            projectManager.addProj(title);
-
+        if (_validateProj()){                              
+            // projectManager.addProj(title);
+            console.log('perfect');
+        }
+        else{
+            console.log('too short');
         }
         //Triggered by the 'add new project' button (has a preventDefault handler). Grabs the data from the form (do I need to use a validate function or can I just put a min char?), calls projectManager.addProj(title), calls saveData(), calls displayProjList(), clearProjForm(), 
     };
@@ -60,7 +63,15 @@ const DOMManager = (() => {
 
     
     const _validateProj = () => {
-        //This checks to ensure that the project doesn't already exist
+        if (newProjectInput.value.length > 0){
+            projectError.textContent = "";
+            return true;
+        }
+        else {
+            projectError.textContent = "Please enter a project";
+            return false;
+        }
+        //Still need to add functionality to check if book exists in memory. Could also make validation occur in realtime
     };
     
     const _validateItem = () => {
@@ -101,9 +112,9 @@ const DOMManager = (() => {
 
     };
 
-    return {};
+    return {newProject};
 
-});
+})();
 
 const overlay = (() => {
     const openProjOverlay = () => {
@@ -138,14 +149,14 @@ const openItemOverlay = document.querySelector('#addNewItem');
 const closeItemOverlay = document.querySelector('#closeItemOverlay');
 //constant for adding a new project or item to the overlay
 const addNewProject = document.querySelector('#submitNewProject');
-
-
+const newProjectInput = document.querySelector('#newProject');
+const projectError = document.querySelector('#projectError');
 
 
 //Event Listener to add a new project
 addNewProject.addEventListener('click', function(event) {
     event.preventDefault();
-    console.log('Project added');
+    DOMManager.newProject();
 });
 
 
