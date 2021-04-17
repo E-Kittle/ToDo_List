@@ -69,6 +69,18 @@ header{
 /* For the 'add new item' overlay */
 .itemOverlay{
     display: none;
+    flex-direction: column;
+    background-color: slategray;
+    height: 50vh;
+    width: 50vw;
+}
+
+.itemOverlay form {
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    margin: auto;
+    
 }
 
 /* For the input forms */
@@ -125,6 +137,11 @@ header{
 }
 
 /* For the items */
+
+.projectTitle {
+    text-align: center;
+    font-size: 30px;
+}
 .itemWrapper{
     margin: 0 30px;
     margin-top: 100px;

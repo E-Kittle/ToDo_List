@@ -84,9 +84,28 @@ const DOMManager = (() => {
         });
     };
 
-    const displayItemList = () => {
+    const displayProject = (index) => {
+        const projectTitle = document.querySelector('.projectTitle');
+        let projects = projectManager.getProjects();
+        if (index === 'sampleButton'){
+            projectTitle.textContent = "Sample Project";    
+        }
+        else if (index === 'weekButton'){
+            projectTitle.textContent = "This Week";
+        }
+        else if (index === 'todayButton'){
+            projectTitle.textContent = "Today";
+        }
+        else{
+            projectTitle.textContent = projects[index].title;
+        }
         //First, calls projectManager.getProjects(). Then checks to see which project is currently selected, loops through the list of items for that project, and updates the DOM with the items. 
     };
+
+    //This is passed the list of items associated with the corresponding project. These are used to update the DOM
+    const _displayItems = (itemList) => {
+
+    }
 
     // This valides the 'add new project' input. It ensures that the project doesn't already exist in memory and ensures there's something already written
     //to the text field
@@ -153,7 +172,7 @@ const DOMManager = (() => {
 
     };
 
-    return {newProject, displayProjList};
+    return {newProject, displayProjList, displayProject};
 
 })();
 
@@ -194,6 +213,7 @@ const newProjectInput = document.querySelector('#newProject');
 const projectError = document.querySelector('#projectError');
 
 const projectHolder = document.querySelector('.newProjectHolder');
+const projectWrapper = document.querySelector('.projectWrapper');
 
 //Event Listener to add a new project
 addNewProject.addEventListener('click', function(event) {
@@ -222,9 +242,31 @@ closeItemOverlay.addEventListener('click', () => {
 });
 
 
+//Event handlers (and associated function) for opening a project and displaying its items
+// Important function for assigning an event handler to each button created by the DOM
+function hasClass(elem, className) {
+    return elem.classList.contains(className);
+}
+
+projectWrapper.addEventListener('click', function(e) {
+    if (hasClass(e.target, 'projectButton')) {
+        let index = e.target.id;
+        console.log(`Button: ${index} pressed`);
+        DOMManager.displayProject(index);
+    }
+})
+
+
+
+
 
 //Will have to be updated in the future to display one of the projects
 window.onload = DOMManager.displayProjList();
+
+
+
+
+
 
 // We'll need something to manage the list of projects on the sidebar
     //methods to add and remove projects

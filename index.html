@@ -16,14 +16,41 @@
         <div class="overlay">
             <div class="projectOverlay">
                 <button id="closeProjectOverlay" class="closeButton">X</button>
+
                 <label for="newProject">What is the name of your new Project?</label>
                 <input type="text" id="newProject" name="newProject">
                 <span id="projectError" class="error"></span>
+
                 <button type="submit" id="submitNewProject">Add Project</button>
             </div>
-            
+
+            <!-- title, priority, dueDate, description-->
             <div class="itemOverlay">
-                <button id="closeItemOverlay" class="closeButton">X</button>
+                <form>
+                    <button id="closeItemOverlay" class="closeButton">X</button>
+
+                    <label for="itemTitle">Title of New Item: </label>
+                    <input type="text" id="itemTitle" name="itemTitle">
+                    <span id="itemTitleError" class="error"></span>
+
+                    <label for="itemDescrip">Description of New Item (optional): </label>
+                    <!-- <input type="text" id="itemDescrip" name="itemDescrip"> -->
+                    <textarea id="itemDescrip"></textarea>
+
+                    <label for="dueDate">Due By: </label>
+                    <input type="date" id="dueDate" name="dueDate">
+                    <span id="dueDateError" class="error"></span>
+
+                    <p>Priority</p>
+                    <div class="radioButtons">
+                        <input type="radio" id="high" name="priority" value="high">
+                        <label for="high">High</label>
+                        <input type="radio" id="medium" name="priority" value="medium">
+                        <label for="medium">Medium</label>
+                        <input type="radio" id="low" name="priority" value="low">
+                        <label for="low">Low</label>
+                    </div>
+                </form>
             </div>
 
         </div>
@@ -45,19 +72,20 @@
                 <div class="projectHolder">
                     <button id="sampleButton" class="projectButton">Sample Project</button>
                     <div class="newProjectHolder">
-                        
+
                     </div>
                 </div>
             </div>
 
             <div class="itemWrapper">
+                <h2 class="projectTitle">Project Title</h2>
                 <div class="itemLabels item">
                     <div class="itemStart">
                         <p>Completed</p>
                         <p>Thing to do</p>
                     </div>
                     <div class="itemEnd">
-                        
+
                         <P>Priority</P>
                         <p>Due</p>
                     </div>
