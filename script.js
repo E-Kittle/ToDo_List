@@ -14,6 +14,7 @@ const projectManager = (() => {
     const addProj = (title) => {
         let proj = projectFactory(title, []);
         projectList.push(proj);
+        console.table(projectList);
     };
 
     const removeProj = () => {
@@ -33,15 +34,19 @@ const projectManager = (() => {
         return projectList;
     };
 
-    return {addProj};
+    return {addProj, getProjects};
 })();
 
 const DOMManager = (() => {
 
     const newProject = (title) => {
         if (_validateProj()){                              
-            // projectManager.addProj(title);
             console.log('perfect');
+            projectManager.addProj(newProjectInput.value);
+            _saveData();
+            _clearProjForm();
+            overlay.closeProjOverlay();
+            displayProjList();
         }
         else{
             console.log('too short');
@@ -54,16 +59,40 @@ const DOMManager = (() => {
     };
 
     const displayProjList = () => {
-        //Calls projectManager.getProjects() and saves to an array. 
+        let projects = projectManager.getProjects();
+        let index = 0;
+        projectHolder.innerHTML = "";
+        projects.forEach((proj) => {
+            const newProj = document.createElement('button');
+            newProj.classList.add('projectButton');
+            newProj.setAttribute('id', index);
+            newProj.textContent = proj.title;
+            projectHolder.appendChild(newProj);
+            index ++;
+        });
     };
 
     const displayItemList = () => {
         //First, calls projectManager.getProjects(). Then checks to see which project is currently selected, loops through the list of items for that project, and updates the DOM with the items. 
     };
 
-    
+    // This valides the 'add new project' input. It ensures that the project doesn't already exist in memory and ensures there's something already written
+    //to the text field
     const _validateProj = () => {
-        if (newProjectInput.value.length > 0){
+        let projects = projectManager.getProjects();
+        let pass = true;
+
+        projects.forEach((proj) => {
+            if (proj.title.toLowerCase() === newProjectInput.value.toLowerCase()){
+                projectError.textContent = "Project already exists";
+                pass = false;
+            }
+        });
+
+        if (!pass){
+            return false;
+        }
+        else if (newProjectInput.value.length > 0){
             projectError.textContent = "";
             return true;
         }
@@ -71,15 +100,15 @@ const DOMManager = (() => {
             projectError.textContent = "Please enter a project";
             return false;
         }
-        //Still need to add functionality to check if book exists in memory. Could also make validation occur in realtime
     };
     
     const _validateItem = () => {
         //Validates the item form
     };
     
+    //This clears the project form
     const _clearProjForm = () => {
-        //This clears the project form
+        newProjectInput.value = "";
     };
     
     const _clearItemForm = () => {
@@ -88,7 +117,7 @@ const DOMManager = (() => {
     
     
     const _saveData = () =>{
-        
+        console.log('data saved');
     };
     
     const loadData = () => {
@@ -152,6 +181,7 @@ const addNewProject = document.querySelector('#submitNewProject');
 const newProjectInput = document.querySelector('#newProject');
 const projectError = document.querySelector('#projectError');
 
+const projectHolder = document.querySelector('.newProjectHolder');
 
 //Event Listener to add a new project
 addNewProject.addEventListener('click', function(event) {
