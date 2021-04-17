@@ -30,28 +30,40 @@ const projectManager = (() => {
         //this takes in a new item object and adds it to the item array
     };
 
+    const saveProjects = () => {
+        localStorage.setItem('projectList', JSON.stringify(projectList));
+    };
+
     const getProjects = () => {
+        let projects = JSON.parse(localStorage.getItem('projectList'));
+        if (projects === null){
+            projects = [];
+        }
+        projectList.splice(0, projectList.length);
+        projects.forEach(arr => {
+            projectList.push(arr);
+        })
         return projectList;
     };
 
-    return {addProj, getProjects};
+
+    return {addProj, getProjects, saveProjects};
 })();
+
+
+
 
 const DOMManager = (() => {
 
+    //This is triggered by the 'add new project' button. It validates the data, adds and saves it to the array, and updates the DOM
     const newProject = (title) => {
-        if (_validateProj()){                              
-            console.log('perfect');
+        if (_validateProj()){                                   //If validation failed, all errors are handled by _validateProj
             projectManager.addProj(newProjectInput.value);
-            _saveData();
+            projectManager.saveProjects();
             _clearProjForm();
             overlay.closeProjOverlay();
             displayProjList();
         }
-        else{
-            console.log('too short');
-        }
-        //Triggered by the 'add new project' button (has a preventDefault handler). Grabs the data from the form (do I need to use a validate function or can I just put a min char?), calls projectManager.addProj(title), calls saveData(), calls displayProjList(), clearProjForm(), 
     };
 
     const newItem = () => {
@@ -116,9 +128,9 @@ const DOMManager = (() => {
     };
     
     
-    const _saveData = () =>{
-        console.log('data saved');
-    };
+    // const _saveData = () =>{
+    //     localStorage.setItem('allProjects, JSON.stringify(')
+    // };
     
     const loadData = () => {
         //Triggered by a page reload
@@ -141,7 +153,7 @@ const DOMManager = (() => {
 
     };
 
-    return {newProject};
+    return {newProject, displayProjList};
 
 })();
 
@@ -211,18 +223,18 @@ closeItemOverlay.addEventListener('click', () => {
 
 
 
-
-
+//Will have to be updated in the future to display one of the projects
+window.onload = DOMManager.displayProjList();
 
 // We'll need something to manage the list of projects on the sidebar
     //methods to add and remove projects
 //We'll also need a module pattern to manage the manage the items within a project
 
-let firstItem = itemFactory("Wash Dog", "urgent", "4/13");
-let secondItem = itemFactory('sweep', 'meh', '4/15');
+// let firstItem = itemFactory("Wash Dog", "urgent", "4/13");
+// let secondItem = itemFactory('sweep', 'meh', '4/15');
 
-let arr = [firstItem, secondItem];
+// let arr = [firstItem, secondItem];
 
-let firstProject = projectFactory('Chores', arr);
-console.log(firstProject.title);
-console.log(firstProject);
+// let firstProject = projectFactory('Chores', arr);
+// console.log(firstProject.title);
+// console.log(firstProject);
