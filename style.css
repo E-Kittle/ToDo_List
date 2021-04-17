@@ -170,6 +170,12 @@ header{
     justify-content: space-between;
 }
 
+.completed {
+    width: 25px;
+    height: 5px;
+    flex: 0 1;
+}
+
 .itemContainer .itemStart{
     padding-left: 30px;
 }

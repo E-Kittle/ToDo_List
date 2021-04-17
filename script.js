@@ -124,16 +124,20 @@ const DOMManager = (() => {
             projectTitle.removeAttribute('id');
             projectTitle.textContent = projects[index].title;
             projectTitle.setAttribute('id', index);
-            _displayItems(projects[index].items);
+            _displayItems(index, projects[index].items);
         }
 
         //First, calls projectManager.getProjects(). Then checks to see which project is currently selected, loops through the list of items for that project, and updates the DOM with the items. 
     };
     
     //This is passed the list of items associated with the corresponding project. These are used to update the DOM
-    const _displayItems = (itemList) => {
+    const _displayItems = (projectIndex, itemList) => {
         console.table(itemList);
         let index = 0;
+
+        const items = document.querySelector('.items');
+
+        items.innerHTML = "";
 
         itemList.forEach(item => {
             //Create div (class itemContainer), checkbox, title, priority, dueDate
@@ -148,6 +152,7 @@ const DOMManager = (() => {
 
             const check = document.createElement('input');
             check.setAttribute('input', 'checkbox');
+            check.classList.add('completed');
             check.setAttribute('id', index);
 
             const title = document.createElement('p');
@@ -166,11 +171,20 @@ const DOMManager = (() => {
             itemEnd.appendChild(dueDate);
             itemContainer.appendChild(itemStart);
             itemContainer.appendChild(itemEnd);
-            itemWrapper.appendChild(itemContainer);
-
+            // itemWrapper.appendChild(itemContainer);
+            items.appendChild(itemContainer);
             index++;
         });
 
+
+        //                 <button id="addNewItem" class="addNew">+</button>
+        //Add a button that allows the user to add new items
+        const newItemBtn = document.createElement('button');
+        newItemBtn.classList.add('addNew');
+        newItemBtn.classList.add('addNewItem');
+        newItemBtn.setAttribute('id', projectIndex);
+        newItemBtn.textContent = '+';
+        items.appendChild(newItemBtn);
 
     //     <input type="checkbox" id="complete">
     //     <p>Sample item</p>
@@ -316,7 +330,6 @@ const DOMManager = (() => {
     //These 4 are for opening and closing the overlay. 
     const openProjectOverlay = document.querySelector('#addNewProject');
     const closeProjectOverlay = document.querySelector('#closeProjectOverlay');
-    const openItemOverlay = document.querySelector('#addNewItem');
     const closeItemOverlay = document.querySelector('#closeItemOverlay');
     //constant for adding a new project or item to the overlay
     const projectHolder = document.querySelector('.newProjectHolder');
@@ -331,36 +344,17 @@ const DOMManager = (() => {
     
     //Event Listener to add a new project
     const addNewProject = document.querySelector('#submitNewProject');
-addNewProject.addEventListener('click', function (event) {
-    event.preventDefault();
-    DOMManager.newProject();
-});
-
-//Event listener to add a new item
+    addNewProject.addEventListener('click', function (event) {
+        event.preventDefault();
+        DOMManager.newProject();
+    });
+    
+    //Event listener to add a new item
 const newItemButton = document.querySelector('#submitNewItem');
 newItemButton.addEventListener('click', function (e) {
     e.preventDefault();
     DOMManager.newItem();
 })
-
-
-// For the Overlay - First two are for adding a new project and second two are for adding a new item
-openProjectOverlay.addEventListener('click', () => {
-    overlay.openProjOverlay();
-});
-
-closeProjectOverlay.addEventListener('click', () => {
-    overlay.closeProjOverlay();
-});
-
-openItemOverlay.addEventListener('click', () => {
-    overlay.openItmOverlay();
-});
-
-closeItemOverlay.addEventListener('click', () => {
-    overlay.closeItmOverlay();
-});
-
 
 //Event handlers (and associated function) for opening a project and displaying its items
 // Important function for assigning an event handler to each button created by the DOM
@@ -377,7 +371,36 @@ projectWrapper.addEventListener('click', function (e) {
 })
 
 
+// For the Overlay - First two are for adding a new project and second two are for adding a new item
+openProjectOverlay.addEventListener('click', () => {
+    overlay.openProjOverlay();
+});
 
+closeProjectOverlay.addEventListener('click', () => {
+    overlay.closeProjOverlay();
+});
+
+//Opens the item overlay
+itemWrapper.addEventListener('click', function(e) {
+    if (hasClass(e.target, 'addNew')) {
+        let index = e.target.id;
+        overlay.openItmOverlay();
+    }
+});
+
+closeItemOverlay.addEventListener('click', function(e) {
+    e.preventDefault();
+    overlay.closeItmOverlay();
+});
+
+
+
+
+//Keeping these two as a backup (for tonight). These display the overlay for the 'add new item'
+// const openItemOverlay = document.querySelector('#addNewItem');
+// openItemOverlay.addEventListener('click', () => {
+//     overlay.openItmOverlay();
+// });
 
 
 //Will have to be updated in the future to display one of the projects
@@ -389,7 +412,7 @@ window.onload = DOMManager.displayProjList();
 
 
 // We'll need something to manage the list of projects on the sidebar
-    //methods to add and remove projects
+//methods to add and remove projects
 //We'll also need a module pattern to manage the manage the items within a project
 
 // let firstItem = itemFactory("Wash Dog", "urgent", "4/13");
