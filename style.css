@@ -71,7 +71,6 @@ header{
     display: none;
     flex-direction: column;
     background-color: slategray;
-    height: 50vh;
     width: 50vw;
 }
 

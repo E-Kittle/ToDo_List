@@ -1,15 +1,15 @@
 const itemFactory = (title, priority, dueDate, description, status) => {
-    return {title, priority, dueDate, description, status};
+    return { title, priority, dueDate, description, status };
 }
 
 const projectFactory = (title, items) => {
-    return {title, items};
+    return { title, items };
 }
 
 const projectManager = (() => {
     //This stores the list of projects
     const projectList = [];
-    
+
     //Adds a new project to the list. Takes in the title of the list, creates a new project, and adds it to the list
     const addProj = (title) => {
         let proj = projectFactory(title, []);
@@ -36,7 +36,7 @@ const projectManager = (() => {
 
     const getProjects = () => {
         let projects = JSON.parse(localStorage.getItem('projectList'));
-        if (projects === null){
+        if (projects === null) {
             projects = [];
         }
         projectList.splice(0, projectList.length);
@@ -47,7 +47,7 @@ const projectManager = (() => {
     };
 
 
-    return {addProj, getProjects, saveProjects};
+    return { addProj, getProjects, saveProjects };
 })();
 
 
@@ -57,7 +57,7 @@ const DOMManager = (() => {
 
     //This is triggered by the 'add new project' button. It validates the data, adds and saves it to the array, and updates the DOM
     const newProject = (title) => {
-        if (_validateProj()){                                   //If validation failed, all errors are handled by _validateProj
+        if (_validateProj()) {                                   //If validation failed, all errors are handled by _validateProj
             projectManager.addProj(newProjectInput.value);
             projectManager.saveProjects();
             _clearProjForm();
@@ -67,6 +67,8 @@ const DOMManager = (() => {
     };
 
     const newItem = () => {
+        console.log('worked');
+        _validateItem();
         //This is triggered by the 'add new item' button w/ a preventDefault handler. validateItem(), projectManager.newItem(), clearItemForm(), displayItemList(), saveData()
     };
 
@@ -80,23 +82,23 @@ const DOMManager = (() => {
             newProj.setAttribute('id', index);
             newProj.textContent = proj.title;
             projectHolder.appendChild(newProj);
-            index ++;
+            index++;
         });
     };
 
     const displayProject = (index) => {
         const projectTitle = document.querySelector('.projectTitle');
         let projects = projectManager.getProjects();
-        if (index === 'sampleButton'){
-            projectTitle.textContent = "Sample Project";    
+        if (index === 'sampleButton') {
+            projectTitle.textContent = "Sample Project";
         }
-        else if (index === 'weekButton'){
+        else if (index === 'weekButton') {
             projectTitle.textContent = "This Week";
         }
-        else if (index === 'todayButton'){
+        else if (index === 'todayButton') {
             projectTitle.textContent = "Today";
         }
-        else{
+        else {
             projectTitle.textContent = projects[index].title;
         }
         //First, calls projectManager.getProjects(). Then checks to see which project is currently selected, loops through the list of items for that project, and updates the DOM with the items. 
@@ -110,20 +112,22 @@ const DOMManager = (() => {
     // This valides the 'add new project' input. It ensures that the project doesn't already exist in memory and ensures there's something already written
     //to the text field
     const _validateProj = () => {
+
+
         let projects = projectManager.getProjects();
         let pass = true;
 
         projects.forEach((proj) => {
-            if (proj.title.toLowerCase() === newProjectInput.value.toLowerCase()){
+            if (proj.title.toLowerCase() === newProjectInput.value.toLowerCase()) {
                 projectError.textContent = "Project already exists";
                 pass = false;
             }
         });
 
-        if (!pass){
+        if (!pass) {
             return false;
         }
-        else if (newProjectInput.value.length > 0){
+        else if (newProjectInput.value.length > 0) {
             projectError.textContent = "";
             return true;
         }
@@ -132,25 +136,48 @@ const DOMManager = (() => {
             return false;
         }
     };
-    
+
     const _validateItem = () => {
         //Validates the item form
+        //Should return an array of items if valid
+        //Constants for the form inputs and associated error handlers
+        const newItemInput = document.querySelector('#itemTitle');
+        const newItemInputError = document.querySelector('#itemTitleError');
+        const itemDescrip = document.querySelector('#itemDescrip');
+        const dueDate = document.querySelector('#dueDate');
+        const dueDateError = document.querySelector('#dueDateError');
+
+        //Need to research the date stuff and radio buttons
+
+        //For the radiobuttons
+        const rbs = document.querySelectorAll('input[name="priority"]');
+        let priority;
+        rbs.forEach(btn => {
+            if (btn.checked) {
+                priority = btn.value;
+                
+            }
+        });
+
+
+        let arr = [newItemInput.value, itemDescrip.value, dueDate.value, priority]
+        console.table(arr);
     };
-    
+
     //This clears the project form
     const _clearProjForm = () => {
         newProjectInput.value = "";
     };
-    
+
     const _clearItemForm = () => {
         //Clears the item form
     };
-    
-    
+
+
     // const _saveData = () =>{
     //     localStorage.setItem('allProjects, JSON.stringify(')
     // };
-    
+
     const loadData = () => {
         //Triggered by a page reload
     };
@@ -172,14 +199,17 @@ const DOMManager = (() => {
 
     };
 
-    return {newProject, displayProjList, displayProject};
+    return { newProject, displayProjList, displayProject, newItem };
 
 })();
 
 const overlay = (() => {
+    //Could add two constants for checking if the other overlay is open. This will prevent both overlays from being opened at the same time in the background
+
     const openProjOverlay = () => {
         document.querySelector('.overlay').style.display = "flex";
         document.querySelector('.projectOverlay').style.display = "flex";
+        newProjectInput.focus();
     };
 
     const closeProjOverlay = () => {
@@ -197,7 +227,7 @@ const overlay = (() => {
         document.querySelector('.itemOverlay').style.display = "none";
     };
 
-    return {openProjOverlay, closeProjOverlay, closeItmOverlay, openItmOverlay};
+    return { openProjOverlay, closeProjOverlay, closeItmOverlay, openItmOverlay };
 })();
 
 // Constants for DOM items
@@ -208,20 +238,27 @@ const closeProjectOverlay = document.querySelector('#closeProjectOverlay');
 const openItemOverlay = document.querySelector('#addNewItem');
 const closeItemOverlay = document.querySelector('#closeItemOverlay');
 //constant for adding a new project or item to the overlay
-const addNewProject = document.querySelector('#submitNewProject');
-const newProjectInput = document.querySelector('#newProject');
-const projectError = document.querySelector('#projectError');
-
 const projectHolder = document.querySelector('.newProjectHolder');
 const projectWrapper = document.querySelector('.projectWrapper');
 
+const newProjectInput = document.querySelector('#newProject');
+const projectError = document.querySelector('#projectError');
+
+
+
 //Event Listener to add a new project
-addNewProject.addEventListener('click', function(event) {
+const addNewProject = document.querySelector('#submitNewProject');
+addNewProject.addEventListener('click', function (event) {
     event.preventDefault();
     DOMManager.newProject();
 });
 
-
+//Event listener to add a new item
+const newItemButton = document.querySelector('#submitNewItem');
+newItemButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    DOMManager.newItem();
+})
 
 
 // For the Overlay - First two are for adding a new project and second two are for adding a new item
@@ -248,7 +285,7 @@ function hasClass(elem, className) {
     return elem.classList.contains(className);
 }
 
-projectWrapper.addEventListener('click', function(e) {
+projectWrapper.addEventListener('click', function (e) {
     if (hasClass(e.target, 'projectButton')) {
         let index = e.target.id;
         console.log(`Button: ${index} pressed`);
