@@ -65,8 +65,8 @@ const projectManager = (() => {
         })
         return projectList;
     };
-
-
+    
+    
     return { addProj, getProjects, saveProjects, addItem};
 })();
 
@@ -74,6 +74,7 @@ const projectManager = (() => {
 
 
 const DOMManager = (() => {
+    const items = document.querySelector('.items');
 
     //This is triggered by the 'add new project' button. It validates the data, adds and saves it to the array, and updates the DOM
     const newProject = (title) => {
@@ -121,11 +122,13 @@ const DOMManager = (() => {
             projectTitle.removeAttribute('id');
             projectTitle.textContent = "This Week";
             projectTitle.setAttribute('id', 'week');
+            items.innerHTML = "";
         }
         else if (index === 'todayButton') {
             projectTitle.removeAttribute('id');
             projectTitle.textContent = "Today";
             projectTitle.setAttribute('id', 'today');
+            items.innerHTML = "";
         }
         else {
             projectTitle.removeAttribute('id');
@@ -140,7 +143,6 @@ const DOMManager = (() => {
     //This is passed the list of items associated with the corresponding project. These are used to update the DOM
     const _displayItems = (projectIndex, itemList) => {
         let index = 0;
-        const items = document.querySelector('.items');
         items.innerHTML = "";
 
         itemList.forEach(item => {
