@@ -66,8 +66,13 @@ const projectManager = (() => {
         return projectList;
     };
 
+    const getItems = (index) => {
+        let projects = getProjects();
+        return projects[index].items;
+    }
 
-    return { addProj, getProjects, saveProjects, addItem };
+
+    return { addProj, getProjects, saveProjects, addItem, getItems };
 })();
 
 
@@ -78,9 +83,9 @@ const DOMManager = (() => {
     //This is triggered by the 'add new project' button. It validates the data, adds and saves it to the array, and updates the DOM
     const newProject = (title) => {
         //If validation fails, all errors are handled by _validateProj
-        if (_validateProj()) {
+        if (formManager.validateProj()) {
             projectManager.addProj(newProjectInput.value);
-            _clearProjForm();
+            formManager.clearProjForm();
             overlay.closeProjOverlay();
             displayProjList();
         }
@@ -88,16 +93,14 @@ const DOMManager = (() => {
 
     //Still in progress. Currently grabs the data from the fields and displays it as an array. It does send it to projectManager to 'create the item' but it still needs to be appended to the appropriate project
     const newItem = (index) => {
-        let arr = _validateItem();
-        if (arr.length <= 0) {
-            console.log('error');
-        }
-        else{
-            console.log('data to be added');
-            console.table(arr);
+        let arr = formManager.validateItem();
+        if (arr.length > 0) {
             projectManager.addItem(arr, index);
+            displayProject(index);
+
+
             // _clearItemForm();
-            _displayItems(index, projectList[index].items);
+            // _displayItems(index, projectManager(index));
         }
         //This is triggered by the 'add new item' button w/ a preventDefault handler. validateItem(), projectManager.newItem(), clearItemForm(), displayItemList(), saveData()
     };
@@ -141,11 +144,8 @@ const DOMManager = (() => {
 
     //This is passed the list of items associated with the corresponding project. These are used to update the DOM
     const _displayItems = (projectIndex, itemList) => {
-        console.table(itemList);
         let index = 0;
-
         const items = document.querySelector('.items');
-
         items.innerHTML = "";
 
         itemList.forEach(item => {
@@ -180,7 +180,6 @@ const DOMManager = (() => {
             itemEnd.appendChild(dueDate);
             itemContainer.appendChild(itemStart);
             itemContainer.appendChild(itemEnd);
-            // itemWrapper.appendChild(itemContainer);
             items.appendChild(itemContainer);
             index++;
         });
@@ -195,19 +194,24 @@ const DOMManager = (() => {
         items.appendChild(newItemBtn);
     }
 
+    return { newProject, displayProjList, displayProject, newItem};
+    
+})();
+
+const formManager = (() => {
     // This valides the 'add new project' input. It ensures that the project doesn't already exist in memory and ensures there's something already written
     //to the text field
-    const _validateProj = () => {
+    const validateProj = () => {
         let projects = projectManager.getProjects();
         let pass = true;
-
+    
         projects.forEach((proj) => {
             if (proj.title.toLowerCase() === newProjectInput.value.toLowerCase()) {
                 projectError.textContent = "Project already exists";
                 pass = false;
             }
         });
-
+    
         if (!pass) {
             return false;
         }
@@ -221,8 +225,8 @@ const DOMManager = (() => {
         }
     };
     //This validates the item form. If validation passes, it returns an array of the items, if it fails it returns an empty array
-    const _validateItem = () => {
-
+    const validateItem = () => {
+    
         //Validation for the description 
         const itemDescrip = document.querySelector('#itemDescrip');
         let descrip;
@@ -243,7 +247,7 @@ const DOMManager = (() => {
         else{
             newItemInputError.textContent = "";
         }
-
+    
         //Validation for the dueDate - can't be scheduled in the past - Too complicated right now. leave for later
         const dueDate = document.querySelector('#dueDate');
         const dueDateError = document.querySelector('#dueDateError');
@@ -254,7 +258,7 @@ const DOMManager = (() => {
         else{
             dueDateError.textContent = "";
         }
-
+    
         //For the radiobuttons
         const rbs = document.querySelectorAll('input[name="priority"]');
         let priority;
@@ -263,44 +267,41 @@ const DOMManager = (() => {
                 priority = btn.value;
             }
         });
-
+    
         return [newItemInput.value, priority, dueDate.value, descrip];
     };
-
+    
     //This clears the project form
-    const _clearProjForm = () => {
+    const clearProjForm = () => {
         newProjectInput.value = "";
     };
-
-    const _clearItemForm = () => {
+    
+    const clearItemForm = () => {
         //Clears the item form
     };
-
-
-    //For modifying projects - Add later
-    const updateProj = () => {
-        //This 
-    };
-
-    const updateItem = () => {
-
-    };
-
-    const removeProj = () => {
-
-    };
-
-    const removeItem = () => {
-
-    };
-
-    return { newProject, displayProjList, displayProject, newItem};
-
+    
+    return {validateProj, validateItem, clearProjForm, clearItemForm};
 })();
+
+//For modifying projects - Add later
+const modifyProjects = (() => {    
+    const updateItem = () => {
+    
+    };
+    
+    const removeProj = () => {
+    
+    };
+    
+    const removeItem = () => {
+    
+    };
+})();
+
 
 const overlay = (() => {
     //Could add two constants for checking if the other overlay is open. This will prevent both overlays from being opened at the same time in the background
-
+    
     const openProjOverlay = () => {
         document.querySelector('.overlay').style.display = "flex";
         document.querySelector('.projectOverlay').style.display = "flex";
