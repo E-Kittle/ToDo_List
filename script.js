@@ -30,36 +30,18 @@ const projectManager = (() => {
     const addProj = (title) => {
         let proj = projectFactory(title, []);
         projectList.push(proj);
-        console.table(projectList);
+        saveProjects();
     };
 
     const removeProj = () => {
         //This removes a project from the list. Likely should take in the index of the project 
     };
 
-
-    const addItem = (arr) => {
-
-        //We have a new item. Create the new item, find which index the project is located on
-
-
-        // let status = false;
-        let item = itemFactory(arr[0], arr[1], arr[2], arr[3], status);
-        console.log(item);
-        // projectList[index].items.push(item);
-        console.table(projectList);
-
-        // // projectTitle.setAttribute('id', 'samp');
-        // let index = projectTitle.getAttribute('id');
-        // console.log(`Current index: ${index}`);
-        // console.log('this sucks');
-        //I've created the new item. Now I need to figure out what the index is of the project and then I can add it to the project's item list and then update the DOM
-
-        //Could grab the index from the currently selected tab..........
-        //What about the default tab then? UGYHHH. I could set that as the default, onload, tab - Problems for later...
-
-
-        //this takes in a new item object and adds it to the item array
+    //This adds a new item to the appropriate project in the array and then saves the data
+    const addItem = (arr, index) => {
+        let item = itemFactory(arr[0], arr[1], arr[2], arr[3], status);        
+        projectList[index].items.push(item);
+        saveProjects();
     };
 
     const updateItem = () => {
@@ -98,19 +80,25 @@ const DOMManager = (() => {
         //If validation fails, all errors are handled by _validateProj
         if (_validateProj()) {
             projectManager.addProj(newProjectInput.value);
-            projectManager.saveProjects();      //Should this be in the addProj section?
             _clearProjForm();
             overlay.closeProjOverlay();
             displayProjList();
-            //This adds the project to the list but does not make it the active project
         }
     };
 
     //Still in progress. Currently grabs the data from the fields and displays it as an array. It does send it to projectManager to 'create the item' but it still needs to be appended to the appropriate project
     const newItem = (index) => {
-        console.log(`Associated index: ${index}`);
         let arr = _validateItem();
-        projectManager.addItem(arr);
+        if (arr.length <= 0) {
+            console.log('error');
+        }
+        else{
+            console.log('data to be added');
+            console.table(arr);
+            projectManager.addItem(arr, index);
+            // _clearItemForm();
+            _displayItems(index, projectList[index].items);
+        }
         //This is triggered by the 'add new item' button w/ a preventDefault handler. validateItem(), projectManager.newItem(), clearItemForm(), displayItemList(), saveData()
     };
 
@@ -232,15 +220,19 @@ const DOMManager = (() => {
             return false;
         }
     };
-
+    //This validates the item form. If validation passes, it returns an array of the items, if it fails it returns an empty array
     const _validateItem = () => {
-        //Validates the item form
-        //Should return an array of items if valid
-        //Constants for the form inputs and associated error handlers
+
+        //Validation for the description 
         const itemDescrip = document.querySelector('#itemDescrip');
-
-        //Need to research the date stuff and radio buttons
-
+        let descrip;
+        if (itemDescrip.value === "") {
+            descrip = "No description provided";
+        }
+        else{
+            descrip = itemDescrip.value;
+        }
+        
         //Validation for the item title - Will need to add validation that checks if the item exists in the immediate projects list...
         const newItemInput = document.querySelector('#itemTitle');
         const newItemInputError = document.querySelector('#itemTitleError');
@@ -248,11 +240,20 @@ const DOMManager = (() => {
             newItemInputError.textContent = "Enter a title for the item"
             return [];
         }
+        else{
+            newItemInputError.textContent = "";
+        }
 
         //Validation for the dueDate - can't be scheduled in the past - Too complicated right now. leave for later
         const dueDate = document.querySelector('#dueDate');
         const dueDateError = document.querySelector('#dueDateError');
-        let today = new Date();
+        if (dueDate.value === undefined){
+            dueDateError.textContent = "Please select a due date";
+            return [];
+        }
+        else{
+            dueDateError.textContent = "";
+        }
 
         //For the radiobuttons
         const rbs = document.querySelectorAll('input[name="priority"]');
@@ -260,12 +261,10 @@ const DOMManager = (() => {
         rbs.forEach(btn => {
             if (btn.checked) {
                 priority = btn.value;
-
             }
         });
 
-        return [newItemInput.value, priority, dueDate.value, itemDescrip.value];
-
+        return [newItemInput.value, priority, dueDate.value, descrip];
     };
 
     //This clears the project form
@@ -345,8 +344,8 @@ const itemWrapper = document.querySelector('.itemWrapper');
 
 //Event Listener to add a new project
 const addNewProject = document.querySelector('#submitNewProject');
-addNewProject.addEventListener('click', function (event) {
-    event.preventDefault();
+addNewProject.addEventListener('click', function (e) {
+    e.preventDefault();
     DOMManager.newProject();
 });
 
@@ -365,21 +364,17 @@ projectWrapper.addEventListener('click', function (e) {
     }
 })
 
-//Event listener to add a new item
-itemWrapper.addEventListener('click', function(e) {
-    if (hasClass(e.target, 'addNewItem')) {
-        e.preventDefault();
-        let index = e.target.id;
-        DOMManager.newItem(index);
-    }
-});
 
-// const newItemButton = document.querySelector('#submitNewItem');
-// newItemButton.addEventListener('click', function (e) {
-//     e.preventDefault();
-//     //Need to grab the index from the button!!!
-//     DOMManager.newItem(index);
-// })
+const newItemButton = document.querySelector('#submitNewItem');
+newItemButton.addEventListener('click', function (e) {
+    e.preventDefault();
+    index = newItemButton.getAttribute('id');
+    console.log(`Data would be added to index: ${index}`);
+    //Need to grab the index from the button!!!
+    DOMManager.newItem(index);
+})
+
+
 
 // For the Overlay - First two are for adding a new project and second two are for adding a new item
 openProjectOverlay.addEventListener('click', () => {
@@ -394,6 +389,7 @@ closeProjectOverlay.addEventListener('click', () => {
 itemWrapper.addEventListener('click', function (e) {
     if (hasClass(e.target, 'addNew')) {
         let index = e.target.id;
+        newItemButton.setAttribute('id', index);
         overlay.openItmOverlay();
     }
 });
