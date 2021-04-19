@@ -66,13 +66,8 @@ const projectManager = (() => {
         return projectList;
     };
 
-    const getItems = (index) => {
-        let projects = getProjects();
-        return projects[index].items;
-    }
 
-
-    return { addProj, getProjects, saveProjects, addItem, getItems };
+    return { addProj, getProjects, saveProjects, addItem};
 })();
 
 
@@ -83,9 +78,9 @@ const DOMManager = (() => {
     //This is triggered by the 'add new project' button. It validates the data, adds and saves it to the array, and updates the DOM
     const newProject = (title) => {
         //If validation fails, all errors are handled by _validateProj
-        if (formManager.validateProj()) {
-            projectManager.addProj(newProjectInput.value);
-            formManager.clearProjForm();
+        let newProj = formManager.validateProj();
+        if (newProj != "") {
+            projectManager.addProj(newProj);
             overlay.closeProjOverlay();
             displayProjList();
         }
@@ -97,7 +92,7 @@ const DOMManager = (() => {
         if (arr.length > 0) {
             projectManager.addItem(arr, index);
             displayProject(index);
-
+            overlay.closeItmOverlay();
 
             // _clearItemForm();
             // _displayItems(index, projectManager(index));
@@ -201,6 +196,11 @@ const DOMManager = (() => {
 const formManager = (() => {
     // This valides the 'add new project' input. It ensures that the project doesn't already exist in memory and ensures there's something already written
     //to the text field
+    
+    const newItemInput = document.querySelector('#itemTitle');
+    const itemDescrip = document.querySelector('#itemDescrip');
+    const dueDate = document.querySelector('#dueDate');
+
     const validateProj = () => {
         let projects = projectManager.getProjects();
         let pass = true;
@@ -213,22 +213,23 @@ const formManager = (() => {
         });
     
         if (!pass) {
-            return false;
+            return "";
         }
         else if (newProjectInput.value.length > 0) {
             projectError.textContent = "";
-            return true;
+            let title = newProjectInput.value;
+            _clearProjForm();
+            return title;
         }
         else {
             projectError.textContent = "Please enter a project";
-            return false;
+            return "";
         }
     };
     //This validates the item form. If validation passes, it returns an array of the items, if it fails it returns an empty array
     const validateItem = () => {
-    
+        
         //Validation for the description 
-        const itemDescrip = document.querySelector('#itemDescrip');
         let descrip;
         if (itemDescrip.value === "") {
             descrip = "No description provided";
@@ -238,7 +239,6 @@ const formManager = (() => {
         }
         
         //Validation for the item title - Will need to add validation that checks if the item exists in the immediate projects list...
-        const newItemInput = document.querySelector('#itemTitle');
         const newItemInputError = document.querySelector('#itemTitleError');
         if (newItemInput.value.length <= 0) {
             newItemInputError.textContent = "Enter a title for the item"
@@ -247,18 +247,17 @@ const formManager = (() => {
         else{
             newItemInputError.textContent = "";
         }
-    
+        
         //Validation for the dueDate - can't be scheduled in the past - Too complicated right now. leave for later
-        const dueDate = document.querySelector('#dueDate');
         const dueDateError = document.querySelector('#dueDateError');
-        if (dueDate.value === undefined){
+        if (dueDate.value == ""){
             dueDateError.textContent = "Please select a due date";
             return [];
         }
         else{
             dueDateError.textContent = "";
         }
-    
+        
         //For the radiobuttons
         const rbs = document.querySelectorAll('input[name="priority"]');
         let priority;
@@ -268,19 +267,24 @@ const formManager = (() => {
             }
         });
     
-        return [newItemInput.value, priority, dueDate.value, descrip];
+        let arr = [newItemInput.value, priority, dueDate.value, descrip];
+        _clearItemForm();
+        return arr;
     };
     
     //This clears the project form
-    const clearProjForm = () => {
+    const _clearProjForm = () => {
         newProjectInput.value = "";
     };
     
-    const clearItemForm = () => {
-        //Clears the item form
+    //Clears the item form
+    const _clearItemForm = () => {
+        newItemInput.value = "";
+        itemDescrip.value = "";
+        dueDate.value = "";
     };
     
-    return {validateProj, validateItem, clearProjForm, clearItemForm};
+    return {validateProj, validateItem};
 })();
 
 //For modifying projects - Add later
