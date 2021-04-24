@@ -47,8 +47,9 @@ const projectManager = (() => {
         //I think that splicing allows us to replace an item so I can do this in one move. Alternatively, I could just update the updated portion but that would likely require excessive code, probably faster and 'cheaper' to just replace it. 
     };
 
-    const removeItem = () => {
-
+    const removeItem = (index, projIndex) => {
+        projectList[projIndex].items.splice(index, 1)
+        saveProjects();
     };
 
     const saveProjects = () => {
@@ -68,7 +69,7 @@ const projectManager = (() => {
         return projectList;
     };
     
-    return { addProj, getProjects, saveProjects, addItem, removeProj};
+    return { addProj, getProjects, saveProjects, addItem, removeProj, removeItem};
 })();
 
 
@@ -131,7 +132,7 @@ const DOMManager = (() => {
     const displayProject = (index) => {
         //Why did I grab the attributes? I think this was for the items... Might be good anyways in the long run
         let projects = projectManager.getProjects();
-        const projectTitle = document.querySelector('.projectTitle');
+
 
         // console.log(projects[index]);
         if (index === 'weekButton') {
@@ -186,11 +187,19 @@ const DOMManager = (() => {
             const dueDate = document.createElement('p');
             dueDate.textContent = item.dueDate;
 
+            //Adds a 'delete' button
+            const delButton = document.createElement('button');
+            delButton.textContent = 'X';
+            delButton.classList.add('closeButton');
+            delButton.classList.add('delItem');
+            delButton.setAttribute('id', index);
+
             //Append all children
             itemStart.appendChild(check);
             itemStart.appendChild(title);
             itemEnd.appendChild(priority);
             itemEnd.appendChild(dueDate);
+            itemEnd.appendChild(delButton);
             itemContainer.appendChild(itemStart);
             itemContainer.appendChild(itemEnd);
             items.appendChild(itemContainer);
@@ -379,7 +388,7 @@ const projectWrapper = document.querySelector('.projectWrapper');
 const newProjectInput = document.querySelector('#newProject');
 const projectError = document.querySelector('#projectError');
 const itemWrapper = document.querySelector('.itemWrapper');
-
+const projectTitle = document.querySelector('.projectTitle');
 
 //Event Listener to add a new project
 const addNewProject = document.querySelector('#submitNewProject');
@@ -403,47 +412,14 @@ projectWrapper.addEventListener('click', function (e) {
     }
 })
 
-//For the delete project button - Brings up the overlay
-const closeDelProjOverlayButton = document.querySelector('#closeDelProjOverlay');
-const confirmButton = document.querySelector('#confirmButton');
-const abortButton = document.querySelector('.abortButton');
-
-projectWrapper.addEventListener('click', function (e) {
-    if (hasClass(e.target, 'delProjOverlay')) {
-        let index = e.target.id;
-        console.log(`Delete Project Button: ${index} pressed`);
-        overlay.openDelProjOverlay();
-        DOMManager.delProj(index);
-        confirmButton.setAttribute('id', index);
-    }
-})
-
-closeDelProjOverlayButton.addEventListener('click', () => {
-    overlay.closeDelProjOverlay()
-});
-
-abortButton.addEventListener('click', () => {
-    overlay.closeDelProjOverlay();
-});
-
-confirmButton.addEventListener('click', () => {
-    //needs to grab the index, delete the project from the index, and update the DOM
-    let index = confirmButton.getAttribute('id');
-    projectManager.removeProj(index);
-    overlay.closeDelProjOverlay();
-    DOMManager.displayProjList();
-    DOMManager.displayProject(0);
-});
 
 
 
-
+//For adding a new item
 const newItemButton = document.querySelector('#submitNewItem');
 newItemButton.addEventListener('click', function (e) {
     e.preventDefault();
     index = newItemButton.getAttribute('id');
-    console.log(`Data would be added to index: ${index}`);
-    //Need to grab the index from the button!!!
     DOMManager.newItem(index);
 })
 
@@ -473,8 +449,48 @@ closeItemOverlay.addEventListener('click', function (e) {
 });
 
 
+//For the delete project button - Brings up the overlay
+const closeDelProjOverlayButton = document.querySelector('#closeDelProjOverlay');
+const confirmButton = document.querySelector('#confirmButton');
+const abortButton = document.querySelector('.abortButton');
 
+    //Displays the confirmation overlay to ensure user wants to delete the project and all items
+    //Adds an id attribute to the confirmation button to allow ease of deleting the indexed project
+projectWrapper.addEventListener('click', function (e) {
+    if (hasClass(e.target, 'delProjOverlay')) {
+        let index = e.target.id;
+        overlay.openDelProjOverlay();
+        DOMManager.delProj(index);
+        confirmButton.setAttribute('id', index);
+    }
+})
 
+    //These two both close the overlay... too redundant or necessary for users?
+closeDelProjOverlayButton.addEventListener('click', () => {
+    overlay.closeDelProjOverlay()
+});
+
+abortButton.addEventListener('click', () => {
+    overlay.closeDelProjOverlay();
+});
+
+    //Triggered by the 'yes' button - removes the project from the project array, closes the overlay, and updates the DOM
+confirmButton.addEventListener('click', () => {
+    let index = confirmButton.getAttribute('id');
+    projectManager.removeProj(index);
+    overlay.closeDelProjOverlay();
+    DOMManager.displayProjList();
+    DOMManager.displayProject(0);
+});
+
+itemWrapper.addEventListener('click', function(e) {
+    if (hasClass(e.target, 'delItem')) {
+        let index = e.target.id;
+        let projIndex = projectTitle.id;
+        projectManager.removeItem(index, projIndex);
+        DOMManager.displayProject(projIndex);
+    }
+});
 
 
 //Loads the page and displays the sample project by default - If the page refreshes it does take
@@ -485,24 +501,3 @@ window.onload = DOMManager.displayProject(0);
 
 
 
-
-// We'll need something to manage the list of projects on the sidebar
-//methods to add and remove projects
-//We'll also need a module pattern to manage the manage the items within a project
-
-// let firstItem = itemFactory("Wash Dog", "urgent", "4/13");
-// let secondItem = itemFactory('sweep', 'meh', '4/15');
-
-// let arr = [firstItem, secondItem];
-
-// let firstProject = projectFactory('Chores', arr);
-// console.log(firstProject.title);
-// console.log(firstProject);
-
-//Right now we have a problem... opening each of the projects. 
-
-
-
-//To open a project: User clicks on the project they want to look at. This will trigger an event listener that will display the correct project title and load all of the items to the item list.
-
-//Essentially I need to create a sample project. It should actually already have an index of 0. 

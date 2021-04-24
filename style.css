@@ -218,11 +218,15 @@ header{
 .itemEnd{
     display: flex;
     width: 30%;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 #addNewItem{
     margin-top: 20px;
     align-self: flex-end;
     margin-left: 92%;
+}
+
+.delItem{
+    background-color: rgba(265, 265, 265, 0.4);
 }
