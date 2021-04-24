@@ -1,10 +1,7 @@
 //Notes
-//1 - I should have the sample project appear as the default project. Actually, I should have today appear as the default project
-//2 - I need to add functionality to 'add a new item' 
 //3 - Add a 'view more information' button to display an overlay with the items info - Incorporate an edit/delete option for this
 //4 - Need to add event handlers to the checkboxes. That way when a user checks something off as done it becomes grayed out and remains checked - Add a new class
 //5 - Also add a way to delete an item on the main todo screen
-//6 - Add a way to delete an entire project - Ask the user if they're sure
 //7 - Figure out how to utilize the dates. Important for viewing 'today' or 'this week' tasks
 
 
@@ -33,8 +30,9 @@ const projectManager = (() => {
         saveProjects();
     };
 
-    const removeProj = () => {
-        //This removes a project from the list. Likely should take in the index of the project 
+    const removeProj = (index) => {
+        projectList.splice(index, 1);
+        saveProjects();
     };
 
     //This adds a new item to the appropriate project in the array and then saves the data
@@ -70,8 +68,7 @@ const projectManager = (() => {
         return projectList;
     };
     
-    
-    return { addProj, getProjects, saveProjects, addItem};
+    return { addProj, getProjects, saveProjects, addItem, removeProj};
 })();
 
 
@@ -136,13 +133,14 @@ const DOMManager = (() => {
         let projects = projectManager.getProjects();
         const projectTitle = document.querySelector('.projectTitle');
 
+        // console.log(projects[index]);
         if (index === 'weekButton') {
             projectTitle.removeAttribute('id');
             projectTitle.textContent = "This Week";
             projectTitle.setAttribute('id', 'week');
             items.innerHTML = "";
         }
-        else if (index === 'todayButton') {
+        else if (index === 'todayButton' || projects[index] === undefined) {
             projectTitle.removeAttribute('id');
             projectTitle.textContent = "Today";
             projectTitle.setAttribute('id', 'today');
@@ -209,15 +207,11 @@ const DOMManager = (() => {
         items.appendChild(newItemBtn);
     }
 
+    //Updates the title for the delProjectOverlay to double check if the user wants to delete the project
     const delProj = (index) => {
         const projectTitle = document.querySelector('#projectTitle');
         let projects = projectManager.getProjects();
-        
         projectTitle.textContent = projects[index].title;
-        //Need to grab the project title. Two methods: first, I can load the data from memory and just grab the specific index
-        //or, I can attach the title to the delButton and just grab it from there
-
-        //I need to add the index to the 'Yes' button so that I can grab it in response to it being pressed.
     }
 
     return { newProject, displayProjList, displayProject, newItem, delProj};
@@ -385,7 +379,6 @@ const projectWrapper = document.querySelector('.projectWrapper');
 const newProjectInput = document.querySelector('#newProject');
 const projectError = document.querySelector('#projectError');
 const itemWrapper = document.querySelector('.itemWrapper');
-const closeDelProjOverlayButton = document.querySelector('#closeDelProjOverlay');
 
 
 //Event Listener to add a new project
@@ -411,18 +404,38 @@ projectWrapper.addEventListener('click', function (e) {
 })
 
 //For the delete project button - Brings up the overlay
+const closeDelProjOverlayButton = document.querySelector('#closeDelProjOverlay');
+const confirmButton = document.querySelector('#confirmButton');
+const abortButton = document.querySelector('.abortButton');
+
 projectWrapper.addEventListener('click', function (e) {
     if (hasClass(e.target, 'delProjOverlay')) {
         let index = e.target.id;
         console.log(`Delete Project Button: ${index} pressed`);
         overlay.openDelProjOverlay();
         DOMManager.delProj(index);
+        confirmButton.setAttribute('id', index);
     }
 })
 
 closeDelProjOverlayButton.addEventListener('click', () => {
     overlay.closeDelProjOverlay()
 });
+
+abortButton.addEventListener('click', () => {
+    overlay.closeDelProjOverlay();
+});
+
+confirmButton.addEventListener('click', () => {
+    //needs to grab the index, delete the project from the index, and update the DOM
+    let index = confirmButton.getAttribute('id');
+    projectManager.removeProj(index);
+    overlay.closeDelProjOverlay();
+    DOMManager.displayProjList();
+    DOMManager.displayProject(0);
+});
+
+
 
 
 const newItemButton = document.querySelector('#submitNewItem');
