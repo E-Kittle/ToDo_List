@@ -49,6 +49,10 @@ const projectManager = (() => {
         //I think that splicing allows us to replace an item so I can do this in one move. Alternatively, I could just update the updated portion but that would likely require excessive code, probably faster and 'cheaper' to just replace it. 
     };
 
+    const removeItem = () => {
+
+    };
+
     const saveProjects = () => {
         localStorage.setItem('projectList', JSON.stringify(projectList));
     };
@@ -411,9 +415,9 @@ closeItemOverlay.addEventListener('click', function (e) {
 
 
 
-//Will have to be updated in the future to display one of the projects
+//Loads the page and displays the sample project by default
 window.onload = DOMManager.displayProjList();
-
+window.onload = DOMManager.displayProject(0);
 
 
 
