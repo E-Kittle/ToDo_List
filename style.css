@@ -88,6 +88,26 @@ header{
     color: rgb(102, 40, 52);
 }
 
+/* For the delete project/item overlay */
+.deleteOverlay{
+    display: none;
+    flex-direction: column;
+    background-color: slategray;
+    width: 20vw;
+    height: 25vh;
+    justify-content: space-between;
+    text-align: center;
+    padding: 0 0 15px 0;
+}
+
+.deleteOverlay .buttons{
+    margin: 0 20px;
+}
+
+#projectTitle{
+    font-size: 25px;
+    font-weight: 800;
+}
 /* For the content */
 .contentWrapper {
     display: grid;
@@ -106,7 +126,16 @@ header{
 .projectWrapper h2{
     text-align: center;
     margin-bottom: 10px;
-    /* border-bottom: solid darkgray; */
+}
+
+.projectWrapper .delProjOverlay {
+    align-self: flex-start;
+}
+
+.delProjOverlay:hover{
+    height: 40px;
+    width: 40px;
+    background-color: rgba(0,0,0,0.5);
 }
 
 .projectButton{
@@ -114,6 +143,12 @@ header{
     background-color: grey;
     border: solid black;
     margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.projectButton h3 {
+    align-self: center;
 }
 
 .projectButton:hover {

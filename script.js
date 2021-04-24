@@ -110,18 +110,32 @@ const DOMManager = (() => {
         let index = 0;
         projectHolder.innerHTML = "";
         projects.forEach((proj) => {
-            const newProj = document.createElement('button');
+            const newProj = document.createElement('div');
             newProj.classList.add('projectButton');
             newProj.setAttribute('id', index);
-            newProj.textContent = proj.title;
+
+            const newProjTitle = document.createElement('h3');
+            newProjTitle.textContent = proj.title;
+
+            const delButton = document.createElement('button');
+            delButton.textContent = 'X';
+            delButton.classList.add('closeButton');
+            delButton.classList.add('delProjOverlay');
+            delButton.setAttribute('id', index);
+
+            newProj.appendChild(newProjTitle);
+            newProj.appendChild(delButton);
             projectHolder.appendChild(newProj);
             index++;
         });
+
     };
 
     const displayProject = (index) => {
         //Why did I grab the attributes? I think this was for the items... Might be good anyways in the long run
         let projects = projectManager.getProjects();
+        const projectTitle = document.querySelector('.projectTitle');
+
         if (index === 'weekButton') {
             projectTitle.removeAttribute('id');
             projectTitle.textContent = "This Week";
@@ -195,7 +209,18 @@ const DOMManager = (() => {
         items.appendChild(newItemBtn);
     }
 
-    return { newProject, displayProjList, displayProject, newItem};
+    const delProj = (index) => {
+        const projectTitle = document.querySelector('#projectTitle');
+        let projects = projectManager.getProjects();
+        
+        projectTitle.textContent = projects[index].title;
+        //Need to grab the project title. Two methods: first, I can load the data from memory and just grab the specific index
+        //or, I can attach the title to the delButton and just grab it from there
+
+        //I need to add the index to the 'Yes' button so that I can grab it in response to it being pressed.
+    }
+
+    return { newProject, displayProjList, displayProject, newItem, delProj};
     
 })();
 
@@ -312,6 +337,8 @@ const modifyProjects = (() => {
 const overlay = (() => {
     //Could add two constants for checking if the other overlay is open. This will prevent both overlays from being opened at the same time in the background
     
+    const delOverlay = document.querySelector('.delProjOverlay');
+
     const openProjOverlay = () => {
         document.querySelector('.overlay').style.display = "flex";
         document.querySelector('.projectOverlay').style.display = "flex";
@@ -333,7 +360,17 @@ const overlay = (() => {
         document.querySelector('.itemOverlay').style.display = "none";
     };
 
-    return { openProjOverlay, closeProjOverlay, closeItmOverlay, openItmOverlay };
+    const openDelProjOverlay = () => {
+        document.querySelector('.overlay').style.display = "flex";
+        document.querySelector('.deleteOverlay').style.display = "flex";
+    }
+
+    const closeDelProjOverlay = () =>{
+        document.querySelector('.overlay').style.display = "none";
+        document.querySelector('.deleteOverlay').style.display = "none";   
+    }
+
+    return { openProjOverlay, closeProjOverlay, closeItmOverlay, openItmOverlay, openDelProjOverlay, closeDelProjOverlay };
 })();
 
 // Constants for DOM items
@@ -345,12 +382,10 @@ const closeItemOverlay = document.querySelector('#closeItemOverlay');
 //constant for adding a new project or item to the overlay
 const projectHolder = document.querySelector('.newProjectHolder');
 const projectWrapper = document.querySelector('.projectWrapper');
-
 const newProjectInput = document.querySelector('#newProject');
 const projectError = document.querySelector('#projectError');
-const projectTitle = document.querySelector('.projectTitle');
-
 const itemWrapper = document.querySelector('.itemWrapper');
+const closeDelProjOverlayButton = document.querySelector('#closeDelProjOverlay');
 
 
 //Event Listener to add a new project
@@ -374,6 +409,20 @@ projectWrapper.addEventListener('click', function (e) {
         DOMManager.displayProject(index);
     }
 })
+
+//For the delete project button - Brings up the overlay
+projectWrapper.addEventListener('click', function (e) {
+    if (hasClass(e.target, 'delProjOverlay')) {
+        let index = e.target.id;
+        console.log(`Delete Project Button: ${index} pressed`);
+        overlay.openDelProjOverlay();
+        DOMManager.delProj(index);
+    }
+})
+
+closeDelProjOverlayButton.addEventListener('click', () => {
+    overlay.closeDelProjOverlay()
+});
 
 
 const newItemButton = document.querySelector('#submitNewItem');
@@ -415,7 +464,8 @@ closeItemOverlay.addEventListener('click', function (e) {
 
 
 
-//Loads the page and displays the sample project by default
+//Loads the page and displays the sample project by default - If the page refreshes it does take
+//the user back to sample project...
 window.onload = DOMManager.displayProjList();
 window.onload = DOMManager.displayProject(0);
 

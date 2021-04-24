@@ -56,9 +56,14 @@
             </div>
 
             <div class="deleteOverlay">
-                <p class="doubleCheck"></p>
-                <button id="confirmButton">Yes</button>
-                <button id="abortButton">Nevermind</button>
+                <button id="closeDelProjOverlay" class="closeButton">X</button>
+                <p class="doubleCheck">Are you sure you want to delete: </p>
+                <p id="projectTitle">project title</p>
+                <p> and all associated items?</p>
+                <div class="buttons">
+                    <button id="confirmButton">Yes</button>
+                    <button id="abortButton">Nevermind</button>
+                </div>
             </div>
 
         </div>
@@ -71,8 +76,12 @@
 
             <div class="projectWrapper">
                 <div class="dateDrivenProjects">
-                    <button id="todayButton" class="projectButton">Today</button>
-                    <button id="weekButton" class="projectButton">This Week</button>
+                    <div class="projectButton">
+                        <h3 id="todayButton">Today</h3>
+                    </div>
+                    <div class="projectButton">
+                        <h3 id="weekButton">This Week</h3>
+                    </div>
                 </div>
                 <button id="addNewProject" class="addNew">+</button>
                 <h2>Projects</h2>
