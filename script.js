@@ -1,7 +1,6 @@
 //Notes
 //3 - Add a 'view more information' button to display an overlay with the items info - Incorporate an edit/delete option for this
 //4 - Need to add event handlers to the checkboxes. That way when a user checks something off as done it becomes grayed out and remains checked - Add a new class
-//5 - Also add a way to delete an item on the main todo screen
 //7 - Figure out how to utilize the dates. Important for viewing 'today' or 'this week' tasks
 
 
@@ -60,7 +59,7 @@ const projectManager = (() => {
         let projects = JSON.parse(localStorage.getItem('projectList'));
         if (projects === null) {
             //Fill with sample data
-            projects = [{ title: 'Sample Project', items: [{ title: 'Item 1', priority: 'High', dueDate: 2021 - 04 - 05, description: 'This is item 1', status: false }, { title: 'Item 2', priority: 'Low', dueDate: 2021 - 04 - 09, description: 'This is item 2', status: true }, { title: 'Item 3', priority: 'High', dueDate: 2021 - 04 - 05, description: 'This is item 3', status: false }] }];
+            projects = [{ title: 'Sample Project', items: [{ title: 'Item 1', priority: 'High', dueDate: '2021-04-08', description: 'This is item 1', status: false }, { title: 'Item 2', priority: 'Low', dueDate: '2021-04-08', description: 'This is item 2', status: true }, { title: 'Item 3', priority: 'High', dueDate: '2021-04-08', description: 'This is item 3', status: false }] }];
         }
         projectList.splice(0, projectList.length);
         projects.forEach(arr => {
@@ -194,11 +193,17 @@ const DOMManager = (() => {
             delButton.classList.add('delItem');
             delButton.setAttribute('id', index);
 
+            const moreButton = document.createElement('button');
+            moreButton.textContent = 'Details';
+            moreButton.classList.add('detailsButton');
+            moreButton.setAttribute('id', index);
+
             //Append all children
             itemStart.appendChild(check);
             itemStart.appendChild(title);
             itemEnd.appendChild(priority);
             itemEnd.appendChild(dueDate);
+            itemEnd.appendChild(moreButton);
             itemEnd.appendChild(delButton);
             itemContainer.appendChild(itemStart);
             itemContainer.appendChild(itemEnd);
@@ -223,7 +228,26 @@ const DOMManager = (() => {
         projectTitle.textContent = projects[index].title;
     }
 
-    return { newProject, displayProjList, displayProject, newItem, delProj};
+    const itemDetails = (index, projIndex) => {
+        console.log(`Viewing item: ${index}, in project: ${projIndex}`);
+
+        const detailTitle = document.querySelector('#detailTitle');
+        const detailDescrip = document.querySelector('#detailDesc');
+        const detailPriority = document.querySelector('#detailPriority');
+        const detailDate = document.querySelector('#detailDate');
+        let projects = projectManager.getProjects();
+        let item = projects[projIndex].items[index];
+    
+        detailTitle.textContent = item.title;
+        detailDescrip.textContent = `Description: ${item.description}`;
+        detailPriority.textContent = `Priority: ${item.priority}`;
+        detailDate.textContent = `Due Date: ${item.dueDate}`;
+
+        //Not sure this is the correct thing to set it to
+        editItem.setAttribute('id', index);
+    }
+
+    return { newProject, displayProjList, displayProject, newItem, delProj, itemDetails};
     
 })();
 
@@ -373,7 +397,18 @@ const overlay = (() => {
         document.querySelector('.deleteOverlay').style.display = "none";   
     }
 
-    return { openProjOverlay, closeProjOverlay, closeItmOverlay, openItmOverlay, openDelProjOverlay, closeDelProjOverlay };
+    const openDetailsOverlay = () => {
+        document.querySelector('.overlay').style.display = "flex";
+        document.querySelector('.detailsOverlay').style.display = "flex";   
+    }
+
+    const closeDetailsOverlay = () => {
+        document.querySelector('.overlay').style.display = "none";
+        document.querySelector('.detailsOverlay').style.display = "none";   
+    }
+
+
+    return { openProjOverlay, closeProjOverlay, closeItmOverlay, openItmOverlay, openDelProjOverlay, closeDelProjOverlay, openDetailsOverlay, closeDetailsOverlay};
 })();
 
 // Constants for DOM items
@@ -389,6 +424,7 @@ const newProjectInput = document.querySelector('#newProject');
 const projectError = document.querySelector('#projectError');
 const itemWrapper = document.querySelector('.itemWrapper');
 const projectTitle = document.querySelector('.projectTitle');
+const editItem = document.querySelector('#editButton');
 
 //Event Listener to add a new project
 const addNewProject = document.querySelector('#submitNewProject');
@@ -483,6 +519,7 @@ confirmButton.addEventListener('click', () => {
     DOMManager.displayProject(0);
 });
 
+//For the 'delete item' button
 itemWrapper.addEventListener('click', function(e) {
     if (hasClass(e.target, 'delItem')) {
         let index = e.target.id;
@@ -491,6 +528,24 @@ itemWrapper.addEventListener('click', function(e) {
         DOMManager.displayProject(projIndex);
     }
 });
+
+//For the 'item details' buttons
+itemWrapper.addEventListener('click', function(e) {
+    if (hasClass(e.target, 'detailsButton')) {
+        //Needs to  bring up the overlay
+        //update the information in the overlay - Should also add an 'edit' button there
+        overlay.openDetailsOverlay();
+        let index = e.target.id;
+        let projIndex = projectTitle.id;
+        DOMManager.itemDetails(index, projIndex);
+
+    }
+});
+
+const closeItemDetails = document.querySelector('#closeItemDetails');
+closeItemDetails.addEventListener('click', () => {
+    overlay.closeDetailsOverlay();
+})
 
 
 //Loads the page and displays the sample project by default - If the page refreshes it does take

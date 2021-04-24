@@ -108,6 +108,24 @@ header{
     font-size: 25px;
     font-weight: 800;
 }
+
+/* For the item details overlay */
+.detailsOverlay{
+    display: none;
+    flex-direction: column;
+    background-color: slategray;
+    width: 20vw;
+    height: 25vh;
+    justify-content: space-between;
+    /* text-align: center; */
+    padding: 0 0 15px 20px;
+}
+
+#editButton{
+    width: 80px;
+    align-self: flex-end;
+}
+
 /* For the content */
 .contentWrapper {
     display: grid;
