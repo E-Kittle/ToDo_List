@@ -90,6 +90,7 @@ const DOMManager = (() => {
 
     //Still in progress. Currently grabs the data from the fields and displays it as an array. It does send it to projectManager to 'create the item' but it still needs to be appended to the appropriate project
     const newItem = (index) => {
+
         let arr = formManager.validateItem();
         if (arr.length > 0) {
             projectManager.addItem(arr, index);
@@ -131,10 +132,10 @@ const DOMManager = (() => {
     const displayProject = (index) => {
         //Why did I grab the attributes? I think this was for the items... Might be good anyways in the long run
         let projects = projectManager.getProjects();
-
+        // console.log(`Kids suck: ${index}`);
 
         // console.log(projects[index]);
-        if (index === 'weekButton') {
+        if (index == 'weekButton') {
             projectTitle.removeAttribute('id');
             projectTitle.textContent = "This Week";
             projectTitle.setAttribute('id', 'week');
