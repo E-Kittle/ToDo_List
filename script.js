@@ -47,10 +47,9 @@ const projectManager = (() => {
     };
 
     const completeItem = (projIndex, index, newStatus) => {
-        console.log(`Before: ${projectList[projIndex].items[index].status}`);
         projectList[projIndex].items[index].status = newStatus;
         saveProjects();
-        DOMManager.displayProj(projIndex);
+        DOMManager.displayProject(projIndex);
     };
 
     const removeItem = (index, projIndex) => {
@@ -190,9 +189,6 @@ const DOMManager = (() => {
             if (item.status === true){
                 title.classList.add('completedItem');
                 check.checked = true;
-            }
-            else {
-                title.classList.remove('completedItem');
             }
 
             const priority = document.createElement('p');
