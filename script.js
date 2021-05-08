@@ -1,8 +1,7 @@
 //Notes
-//3 - Add a 'view more information' button to display an overlay with the items info - Incorporate an edit/delete option for this
-//4 - Need to add event handlers to the checkboxes. That way when a user checks something off as done it becomes grayed out and remains checked - Add a new class
+//Add functionality to the 'edit/modify' button
 //7 - Figure out how to utilize the dates. Important for viewing 'today' or 'this week' tasks
-
+//Add 'sort by' methods
 
 
 
@@ -36,7 +35,7 @@ const projectManager = (() => {
 
     //This adds a new item to the appropriate project in the array and then saves the data
     const addItem = (arr, index) => {
-        let item = itemFactory(arr[0], arr[1], arr[2], arr[3], status);        
+        let item = itemFactory(arr[0], arr[1], arr[2], arr[3], status);
         projectList[index].items.push(item);
         saveProjects();
     };
@@ -73,8 +72,8 @@ const projectManager = (() => {
         })
         return projectList;
     };
-    
-    return { addProj, getProjects, saveProjects, addItem, removeProj, removeItem, completeItem};
+
+    return { addProj, getProjects, saveProjects, addItem, removeProj, removeItem, completeItem };
 })();
 
 
@@ -186,7 +185,7 @@ const DOMManager = (() => {
 
             const title = document.createElement('p');
             title.textContent = item.title;
-            if (item.status === true){
+            if (item.status === true) {
                 title.classList.add('completedItem');
                 check.checked = true;
             }
@@ -248,7 +247,7 @@ const DOMManager = (() => {
         const detailDate = document.querySelector('#detailDate');
         let projects = projectManager.getProjects();
         let item = projects[projIndex].items[index];
-    
+
         detailTitle.textContent = item.title;
         detailDescrip.textContent = `Description: ${item.description}`;
         detailPriority.textContent = `Priority: ${item.priority}`;
@@ -258,14 +257,40 @@ const DOMManager = (() => {
         editItem.setAttribute('id', index);
     }
 
-    return { newProject, displayProjList, displayProject, newItem, delProj, itemDetails};
-    
+    return { newProject, displayProjList, displayProject, newItem, delProj, itemDetails };
+
 })();
+
+
+const dateManager = (() => {
+
+    const getToday = () => {
+        var today = new Date();
+        let year = today.getFullYear();
+        let month = today.getMonth();
+        if (month.length = 1) {
+            month = `0${month}`;
+        }
+        let day = today.getDate();
+        if (day.length = 1) {
+            day = `0${day}`
+        }
+
+        let date = `${year}-${month}-${day}`;
+        console.log(`In method: ${date}`);
+    }
+
+    return {getToday};
+
+    //Use getToday() to grab todays date. Then send it to 
+})();
+
+dateManager.getToday();
 
 const formManager = (() => {
     // This valides the 'add new project' input. It ensures that the project doesn't already exist in memory and ensures there's something already written
     //to the text field
-    
+
     const newItemInput = document.querySelector('#itemTitle');
     const itemDescrip = document.querySelector('#itemDescrip');
     const dueDate = document.querySelector('#dueDate');
@@ -273,14 +298,14 @@ const formManager = (() => {
     const validateProj = () => {
         let projects = projectManager.getProjects();
         let pass = true;
-    
+
         projects.forEach((proj) => {
             if (proj.title.toLowerCase() === newProjectInput.value.toLowerCase()) {
                 projectError.textContent = "Project already exists";
                 pass = false;
             }
         });
-    
+
         if (!pass) {
             return "";
         }
@@ -297,36 +322,36 @@ const formManager = (() => {
     };
     //This validates the item form. If validation passes, it returns an array of the items, if it fails it returns an empty array
     const validateItem = () => {
-        
+
         //Validation for the description 
         let descrip;
         if (itemDescrip.value === "") {
             descrip = "No description provided";
         }
-        else{
+        else {
             descrip = itemDescrip.value;
         }
-        
+
         //Validation for the item title - Will need to add validation that checks if the item exists in the immediate projects list...
         const newItemInputError = document.querySelector('#itemTitleError');
         if (newItemInput.value.length <= 0) {
             newItemInputError.textContent = "Enter a title for the item"
             return [];
         }
-        else{
+        else {
             newItemInputError.textContent = "";
         }
-        
+
         //Validation for the dueDate - can't be scheduled in the past - Too complicated right now. leave for later
         const dueDateError = document.querySelector('#dueDateError');
-        if (dueDate.value == ""){
+        if (dueDate.value == "") {
             dueDateError.textContent = "Please select a due date";
             return [];
         }
-        else{
+        else {
             dueDateError.textContent = "";
         }
-        
+
         //For the radiobuttons
         const rbs = document.querySelectorAll('input[name="priority"]');
         let priority;
@@ -335,46 +360,46 @@ const formManager = (() => {
                 priority = btn.value;
             }
         });
-    
+
         let arr = [newItemInput.value, priority, dueDate.value, descrip];
         _clearItemForm();
         return arr;
     };
-    
+
     //This clears the project form
     const _clearProjForm = () => {
         newProjectInput.value = "";
     };
-    
+
     //Clears the item form
     const _clearItemForm = () => {
         newItemInput.value = "";
         itemDescrip.value = "";
         dueDate.value = "";
     };
-    
-    return {validateProj, validateItem};
+
+    return { validateProj, validateItem };
 })();
 
 //For modifying projects - Add later
-const modifyProjects = (() => {    
+const modifyProjects = (() => {
     const updateItem = () => {
-    
+
     };
-    
+
     const removeProj = () => {
-    
+
     };
-    
+
     const removeItem = () => {
-    
+
     };
 })();
 
 
 const overlay = (() => {
     //Could add two constants for checking if the other overlay is open. This will prevent both overlays from being opened at the same time in the background
-    
+
     const delOverlay = document.querySelector('.delProjOverlay');
 
     const openProjOverlay = () => {
@@ -403,23 +428,23 @@ const overlay = (() => {
         document.querySelector('.deleteOverlay').style.display = "flex";
     }
 
-    const closeDelProjOverlay = () =>{
+    const closeDelProjOverlay = () => {
         document.querySelector('.overlay').style.display = "none";
-        document.querySelector('.deleteOverlay').style.display = "none";   
+        document.querySelector('.deleteOverlay').style.display = "none";
     }
 
     const openDetailsOverlay = () => {
         document.querySelector('.overlay').style.display = "flex";
-        document.querySelector('.detailsOverlay').style.display = "flex";   
+        document.querySelector('.detailsOverlay').style.display = "flex";
     }
 
     const closeDetailsOverlay = () => {
         document.querySelector('.overlay').style.display = "none";
-        document.querySelector('.detailsOverlay').style.display = "none";   
+        document.querySelector('.detailsOverlay').style.display = "none";
     }
 
 
-    return { openProjOverlay, closeProjOverlay, closeItmOverlay, openItmOverlay, openDelProjOverlay, closeDelProjOverlay, openDetailsOverlay, closeDetailsOverlay};
+    return { openProjOverlay, closeProjOverlay, closeItmOverlay, openItmOverlay, openDelProjOverlay, closeDelProjOverlay, openDetailsOverlay, closeDetailsOverlay };
 })();
 
 // Constants for DOM items
@@ -501,8 +526,8 @@ const closeDelProjOverlayButton = document.querySelector('#closeDelProjOverlay')
 const confirmButton = document.querySelector('#confirmButton');
 const abortButton = document.querySelector('.abortButton');
 
-    //Displays the confirmation overlay to ensure user wants to delete the project and all items
-    //Adds an id attribute to the confirmation button to allow ease of deleting the indexed project
+//Displays the confirmation overlay to ensure user wants to delete the project and all items
+//Adds an id attribute to the confirmation button to allow ease of deleting the indexed project
 projectWrapper.addEventListener('click', function (e) {
     if (hasClass(e.target, 'delProjOverlay')) {
         let index = e.target.id;
@@ -512,7 +537,7 @@ projectWrapper.addEventListener('click', function (e) {
     }
 })
 
-    //These two both close the overlay... too redundant or necessary for users?
+//These two both close the overlay... too redundant or necessary for users?
 closeDelProjOverlayButton.addEventListener('click', () => {
     overlay.closeDelProjOverlay()
 });
@@ -521,7 +546,7 @@ abortButton.addEventListener('click', () => {
     overlay.closeDelProjOverlay();
 });
 
-    //Triggered by the 'yes' button - removes the project from the project array, closes the overlay, and updates the DOM
+//Triggered by the 'yes' button - removes the project from the project array, closes the overlay, and updates the DOM
 confirmButton.addEventListener('click', () => {
     let index = confirmButton.getAttribute('id');
     projectManager.removeProj(index);
@@ -531,7 +556,7 @@ confirmButton.addEventListener('click', () => {
 });
 
 //For the 'delete item' button
-itemWrapper.addEventListener('click', function(e) {
+itemWrapper.addEventListener('click', function (e) {
     if (hasClass(e.target, 'delItem')) {
         let index = e.target.id;
         let projIndex = projectTitle.id;
@@ -541,7 +566,7 @@ itemWrapper.addEventListener('click', function(e) {
 });
 
 //For the 'item details' buttons
-itemWrapper.addEventListener('click', function(e) {
+itemWrapper.addEventListener('click', function (e) {
     if (hasClass(e.target, 'detailsButton')) {
         overlay.openDetailsOverlay();
         let index = e.target.id;
@@ -557,7 +582,7 @@ closeItemDetails.addEventListener('click', () => {
 })
 
 //For the checkboxes to update the status of the item
-itemWrapper.addEventListener('change', function(e) {
+itemWrapper.addEventListener('change', function (e) {
     if (hasClass(e.target, 'completed')) {
         let index = e.target.id;
         let checked = e.target.checked;
