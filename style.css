@@ -252,3 +252,14 @@ header{
 .completedItem{
     color: purple;
 }
+
+.sort{
+    font-size: 25px;
+    font-weight: 900;
+}
+
+
+.sort:hover{
+    color: red;
+    cursor: pointer;
+}

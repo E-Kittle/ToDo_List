@@ -494,6 +494,7 @@ const projectError = document.querySelector('#projectError');
 const itemWrapper = document.querySelector('.itemWrapper');
 const projectTitle = document.querySelector('.projectTitle');
 const editItem = document.querySelector('#editButton');
+const sortPriority = document.querySelector('.sortPriority');
 
 //Event Listener to add a new project
 const addNewProject = document.querySelector('#submitNewProject');
@@ -634,4 +635,10 @@ window.onload = DOMManager.displayProject(0);
 
 
 
-
+//Sorts the the list based on priority
+//Initially, it'll sort from high to low, then we'll have to be able to sort
+//low to high
+//Where should this function originate from... C
+sortPriority.addEventListener('click', () => {
+    
+});
