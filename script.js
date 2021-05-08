@@ -1,6 +1,6 @@
 //Notes
 //Add functionality to the 'edit/modify' button
-//7 - Figure out how to utilize the dates. Important for viewing 'today' or 'this week' tasks
+//Either delete the 'today' and 'this week' section or add functionality to them. It's not difficult to loop through them and put the appropriate items into an array; however, whenever I want to update whether an item is done or display the overlay I always grab the projectID from the title. Now, we can't do that since the projectID for the title will be 'today' or 'thisweek'
 //Add 'sort by' methods
 
 
@@ -168,6 +168,22 @@ const DOMManager = (() => {
         items.innerHTML = "";
 
         itemList.forEach(item => {
+            let itemContainer = _displayItem(item, projectIndex, index);
+            items.appendChild(itemContainer);
+            index++;
+        });
+
+
+        //Add a button that allows the user to add new items
+        const newItemBtn = document.createElement('button');
+        newItemBtn.classList.add('addNew');
+        newItemBtn.classList.add('addNewItem');
+        newItemBtn.setAttribute('id', projectIndex);
+        newItemBtn.textContent = '+';
+        items.appendChild(newItemBtn);
+    }
+
+    const _displayItem = (item, projectIndex, index) => {
             //Create div (class itemContainer), checkbox, title, priority, dueDate
             const itemContainer = document.createElement('div');
             itemContainer.classList.add('itemContainer');
@@ -182,6 +198,7 @@ const DOMManager = (() => {
             check.setAttribute('type', 'checkbox');
             check.classList.add('completed');
             check.setAttribute('id', index);
+            check.setAttribute('data-key', projectIndex);
 
             const title = document.createElement('p');
             title.textContent = item.title;
@@ -202,11 +219,13 @@ const DOMManager = (() => {
             delButton.classList.add('closeButton');
             delButton.classList.add('delItem');
             delButton.setAttribute('id', index);
+            delButton.setAttribute('data-key', projectIndex);
 
             const moreButton = document.createElement('button');
             moreButton.textContent = 'Details';
             moreButton.classList.add('detailsButton');
             moreButton.setAttribute('id', index);
+            moreButton.setAttribute('data-key', projectIndex);
 
             //Append all children
             itemStart.appendChild(check);
@@ -217,23 +236,11 @@ const DOMManager = (() => {
             itemEnd.appendChild(delButton);
             itemContainer.appendChild(itemStart);
             itemContainer.appendChild(itemEnd);
-            items.appendChild(itemContainer);
-            index++;
-        });
-
-
-        //Add a button that allows the user to add new items
-        const newItemBtn = document.createElement('button');
-        newItemBtn.classList.add('addNew');
-        newItemBtn.classList.add('addNewItem');
-        newItemBtn.setAttribute('id', projectIndex);
-        newItemBtn.textContent = '+';
-        items.appendChild(newItemBtn);
+            return itemContainer;
     }
 
     //Updates the title for the delProjectOverlay to double check if the user wants to delete the project
     const delProj = (index) => {
-        const projectTitle = document.querySelector('#projectTitle');
         let projects = projectManager.getProjects();
         projectTitle.textContent = projects[index].title;
     }
@@ -559,7 +566,7 @@ confirmButton.addEventListener('click', () => {
 itemWrapper.addEventListener('click', function (e) {
     if (hasClass(e.target, 'delItem')) {
         let index = e.target.id;
-        let projIndex = projectTitle.id;
+        let projIndex = e.target.getAttribute('data-key');
         projectManager.removeItem(index, projIndex);
         DOMManager.displayProject(projIndex);
     }
@@ -570,7 +577,7 @@ itemWrapper.addEventListener('click', function (e) {
     if (hasClass(e.target, 'detailsButton')) {
         overlay.openDetailsOverlay();
         let index = e.target.id;
-        let projIndex = projectTitle.id;
+        let projIndex = e.target.getAttribute('data-key');
         DOMManager.itemDetails(index, projIndex);
 
     }
@@ -586,7 +593,7 @@ itemWrapper.addEventListener('change', function (e) {
     if (hasClass(e.target, 'completed')) {
         let index = e.target.id;
         let checked = e.target.checked;
-        let projIndex = projectTitle.id;
+        let projIndex = e.target.getAttribute('data-key');
         projectManager.completeItem(projIndex, index, checked);
     }
 });
