@@ -145,12 +145,16 @@ const DOMManager = (() => {
             projectTitle.textContent = "This Week";
             projectTitle.setAttribute('id', 'week');
             items.innerHTML = "";
+
         }
         else if (index === 'todayButton' || projects[index] === undefined) {
             projectTitle.removeAttribute('id');
             projectTitle.textContent = "Today";
             projectTitle.setAttribute('id', 'today');
             items.innerHTML = "";
+            
+            let todaysItems = dateManager.getTodaysItems();
+            _displayTodaysItems(todaysItems);
         }
         else {
             projectTitle.removeAttribute('id');
@@ -239,6 +243,16 @@ const DOMManager = (() => {
             return itemContainer;
     }
 
+    //This loops through each item in an array that only contains items that are 
+    //due 'today' and displays them to the item list.
+    const _displayTodaysItems = (arr) => {
+        arr.forEach(item => {
+            console.log(item);
+            let itemContainer = _displayItem(item.obj, item.projIndex, item.itemIndex);
+            items.appendChild(itemContainer);
+        });
+    };
+
     //Updates the title for the delProjectOverlay to double check if the user wants to delete the project
     const delProj = (index) => {
         let projects = projectManager.getProjects();
@@ -270,11 +284,10 @@ const DOMManager = (() => {
 
 
 const dateManager = (() => {
-
-    const getToday = () => {
+    const _getToday = () => {
         var today = new Date();
         let year = today.getFullYear();
-        let month = today.getMonth();
+        let month = today.getMonth() + 1;
         if (month.length = 1) {
             month = `0${month}`;
         }
@@ -284,15 +297,38 @@ const dateManager = (() => {
         }
 
         let date = `${year}-${month}-${day}`;
-        console.log(`In method: ${date}`);
+        return date;
     }
 
-    return {getToday};
+    const _objectFactory = (obj, projIndex, itemIndex) => {
+        return {obj, projIndex, itemIndex};
+    }
 
-    //Use getToday() to grab todays date. Then send it to 
+    const getTodaysItems = () => {
+        let today = _getToday();
+        const arr = [];
+        let projects = projectManager.getProjects();
+
+        let projIndex = 0;
+        projects.forEach(project => {
+            itemIndex = 0;
+            project.items.forEach(item => {
+                if (item.dueDate === today){
+                    let newObj = _objectFactory(item, projIndex, itemIndex);
+                    arr.push(newObj);
+                }
+                itemIndex++;
+            });
+            projIndex++;
+        });
+
+        return arr;
+    }
+
+
+    return {getTodaysItems};
 })();
 
-dateManager.getToday();
 
 const formManager = (() => {
     // This valides the 'add new project' input. It ensures that the project doesn't already exist in memory and ensures there's something already written
@@ -568,7 +604,10 @@ itemWrapper.addEventListener('click', function (e) {
         let index = e.target.id;
         let projIndex = e.target.getAttribute('data-key');
         projectManager.removeItem(index, projIndex);
-        DOMManager.displayProject(projIndex);
+        let projTitle = projectTitle.getAttribute('id');
+        DOMManager.displayProject(projTitle);
+        //Use an if statement to check if the current title says 'today'
+        //if it does, then call the 
     }
 });
 
