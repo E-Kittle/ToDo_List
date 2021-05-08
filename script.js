@@ -46,6 +46,13 @@ const projectManager = (() => {
         //I think that splicing allows us to replace an item so I can do this in one move. Alternatively, I could just update the updated portion but that would likely require excessive code, probably faster and 'cheaper' to just replace it. 
     };
 
+    const completeItem = (projIndex, index, newStatus) => {
+        console.log(`Before: ${projectList[projIndex].items[index].status}`);
+        projectList[projIndex].items[index].status = newStatus;
+        saveProjects();
+        DOMManager.displayProj(projIndex);
+    };
+
     const removeItem = (index, projIndex) => {
         projectList[projIndex].items.splice(index, 1)
         saveProjects();
@@ -68,7 +75,7 @@ const projectManager = (() => {
         return projectList;
     };
     
-    return { addProj, getProjects, saveProjects, addItem, removeProj, removeItem};
+    return { addProj, getProjects, saveProjects, addItem, removeProj, removeItem, completeItem};
 })();
 
 
@@ -180,6 +187,13 @@ const DOMManager = (() => {
 
             const title = document.createElement('p');
             title.textContent = item.title;
+            if (item.status === true){
+                title.classList.add('completedItem');
+                check.checked = true;
+            }
+            else {
+                title.classList.remove('completedItem');
+            }
 
             const priority = document.createElement('p');
             priority.textContent = item.priority;
@@ -533,8 +547,6 @@ itemWrapper.addEventListener('click', function(e) {
 //For the 'item details' buttons
 itemWrapper.addEventListener('click', function(e) {
     if (hasClass(e.target, 'detailsButton')) {
-        //Needs to  bring up the overlay
-        //update the information in the overlay - Should also add an 'edit' button there
         overlay.openDetailsOverlay();
         let index = e.target.id;
         let projIndex = projectTitle.id;
@@ -548,6 +560,15 @@ closeItemDetails.addEventListener('click', () => {
     overlay.closeDetailsOverlay();
 })
 
+//For the checkboxes to update the status of the item
+itemWrapper.addEventListener('change', function(e) {
+    if (hasClass(e.target, 'completed')) {
+        let index = e.target.id;
+        let checked = e.target.checked;
+        let projIndex = projectTitle.id;
+        projectManager.completeItem(projIndex, index, checked);
+    }
+});
 
 //Loads the page and displays the sample project by default - If the page refreshes it does take
 //the user back to sample project...
