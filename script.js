@@ -1,6 +1,5 @@
 //Notes
 //Add functionality to the 'edit/modify' button
-//Either delete the 'today' and 'this week' section or add functionality to them. It's not difficult to loop through them and put the appropriate items into an array; however, whenever I want to update whether an item is done or display the overlay I always grab the projectID from the title. Now, we can't do that since the projectID for the title will be 'today' or 'thisweek'
 //Add 'sort by' methods
 
 
@@ -135,19 +134,10 @@ const DOMManager = (() => {
     };
 
     const displayProject = (index) => {
-        //Why did I grab the attributes? I think this was for the items... Might be good anyways in the long run
+
         let projects = projectManager.getProjects();
-        // console.log(`Kids suck: ${index}`);
 
-        // console.log(projects[index]);
-        if (index == 'weekButton') {
-            projectTitle.removeAttribute('id');
-            projectTitle.textContent = "This Week";
-            projectTitle.setAttribute('id', 'week');
-            items.innerHTML = "";
-
-        }
-        else if (index === 'todayButton' || projects[index] === undefined) {
+        if (index === 'todayButton' || projects[index] === undefined) {
             projectTitle.removeAttribute('id');
             projectTitle.textContent = "Today";
             projectTitle.setAttribute('id', 'today');
@@ -605,7 +595,7 @@ itemWrapper.addEventListener('click', function (e) {
         let projIndex = e.target.getAttribute('data-key');
         projectManager.removeItem(index, projIndex);
         let projTitle = projectTitle.getAttribute('id');
-        DOMManager.displayProject(projTitle);
+        DOMManager.displayProject(proj);
         //Use an if statement to check if the current title says 'today'
         //if it does, then call the 
     }
